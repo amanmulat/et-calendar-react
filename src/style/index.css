@@ -1,0 +1,177 @@
+.calendarContainer {
+  width: 320px;
+  /* height: 17rem; */
+}
+
+.gridSeven {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.w-full {
+  width: 100%;
+}
+
+.dayText {
+  font-size: 0.9rem;
+  color: #000;
+}
+
+.dayOfWeek {
+  font-size: 0.8rem;
+  color: #000;
+}
+
+.centerGrid {
+  display: grid;
+  place-content: center;
+}
+
+.rowHeight {
+  height: 2rem;
+}
+.borderTop {
+  border-top: 1px solid #eeeeee;
+}
+
+.grayText {
+  color: #a0a0a0;
+}
+
+.backgroundBlue {
+  background-color: #83b5ff;
+  color: white;
+}
+.backgroundBlue:hover {
+  background-color: #83b5ff;
+  color: white;
+}
+.dateWidthAndHeight {
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: 50%;
+}
+/* .dateWidthAndHeight:hover {
+  background-color: #2a2a2a;
+  color: white;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+  cursor: pointer;
+} */
+.selectedDate {
+  background-color: #2a2a2a;
+  color: white;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+  cursor: pointer;
+}
+
+.currentMonth:hover {
+  background-color: #2a2a2a;
+  color: white;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+  cursor: pointer;
+}
+
+.monthButtons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.todayButton {
+  cursor: pointer;
+}
+.monthButton {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+.topActions {
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.buttonStyle {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-size: cover;
+  cursor: pointer;
+  border: none;
+  margin-right: 7px;
+}
+
+.buttonBackgroundEt {
+  background: linear-gradient(
+    to bottom,
+    rgb(7, 137, 48),
+    rgb(252, 209, 22),
+    rgb(206, 17, 38)
+  );
+  background-size: cover;
+}
+
+.buttonBackgroundEn {
+  background: rgb(124, 124, 216);
+  background-size: cover;
+}
+
+.Cal {
+  position: absolute;
+  top: 100%; /* Adjust this as needed */
+  left: 0;
+  z-index: 1000; /* Make sure it's above other content */
+  width: fit-content;
+  background-color: white;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 0px;
+  user-select: none;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+.allContainer {
+  position: relative;
+}
+.datePickerContainer {
+  position: relative;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 5px 10px;
+  background-color: white;
+}
+
+.datePickerContainer:focus-within {
+  border: 1px solid #555;
+}
+.datePickerContainer:focus-within .calendarIcon {
+  color: #555;
+}
+.datePickerContainer:hover {
+  border: 1px solid #555;
+}
+.dateInputStyle {
+  flex-grow: 1; /* Allow the input to fill the container */
+  border: none;
+  outline: none;
+  padding: 8px 10px; /* Adjust padding as needed */
+  box-sizing: border-box; /* Include padding and border in the width */
+  user-select: none;
+  cursor: pointer;
+}
+
+.calendarIcon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #555;
+  pointer-events: none; /* Makes sure clicks on the icon focus the input */
+}
