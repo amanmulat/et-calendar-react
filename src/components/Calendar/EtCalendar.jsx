@@ -16,7 +16,7 @@ import { toEthiopian } from "ethiopian-date";
 
 export const EtCalendar = ({ value, onChange, calendarType }) => {
   const [calendarTypeInt, setCalendarTypeInt] = useState(
-    calendarType ? true : false
+    calendarType === undefined || calendarType === null ? true : calendarType
   );
   const [label, setLabel] = useState("");
   const days = ["S", "M", "T", "W", "T", "F", "S"];
