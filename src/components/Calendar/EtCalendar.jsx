@@ -14,7 +14,22 @@ import {
 import { FiCalendar } from "react-icons/fi";
 import { toEthiopian } from "ethiopian-date";
 
-export const EtCalendar = ({ value, onChange, calendarType }) => {
+export const EtCalendar = ({
+  value,
+  onChange,
+  calendarType,
+  minDate,
+  maxDate,
+  disabled,
+}) => {
+  let minDateIn = null;
+  let maxDateIn = null;
+  if (minDate) {
+    minDateIn = new Date(minDate).setHours(0, 0, 0, 0);
+  }
+  if (maxDate) {
+    maxDateIn = new Date(maxDate).setHours(0, 0, 0, 0);
+  }
   const [calendarTypeInt, setCalendarTypeInt] = useState(
     calendarType === undefined || calendarType === null ? true : calendarType
   );
@@ -160,8 +175,14 @@ export const EtCalendar = ({ value, onChange, calendarType }) => {
                             key={index}
                             onClick={() => {
                               if (isCurrentMonth) {
-                                setLabel(etLabel(date));
-                                handleDateChange(date);
+                                if (
+                                  !disabled &&
+                                  (!minDateIn || minDateIn <= date) &&
+                                  (!maxDateIn || maxDateIn >= date)
+                                ) {
+                                  setLabel(etLabel(date));
+                                  handleDateChange(date);
+                                }
                               }
                             }}
                             className=" rowHeight dayText rowHeight centerGrid borderTop"
@@ -169,6 +190,13 @@ export const EtCalendar = ({ value, onChange, calendarType }) => {
                             <span
                               className={cn(
                                 isCurrentMonth ? "" : "grayText",
+                                minDateIn && minDateIn >= date
+                                  ? "grayText"
+                                  : "",
+                                maxDateIn && maxDateIn <= date
+                                  ? "grayText"
+                                  : "",
+                                disabled ? "grayText" : "",
                                 today ? "backgroundBlue " : "",
                                 "dateWidthAndHeight centerGrid",
                                 isCurrentMonth ? "currentMonth" : "",
@@ -238,8 +266,14 @@ export const EtCalendar = ({ value, onChange, calendarType }) => {
                           <span
                             onClick={() => {
                               if (isCurrentMonth) {
-                                handleDateChange(date);
-                                setLabel(date.toDate().toDateString());
+                                if (
+                                  !disabled &&
+                                  (!minDateIn || minDateIn <= date) &&
+                                  (!maxDateIn || maxDateIn >= date)
+                                ) {
+                                  handleDateChange(date);
+                                  setLabel(date.toDate().toDateString());
+                                }
                               }
                             }}
                             key={index}
@@ -248,6 +282,13 @@ export const EtCalendar = ({ value, onChange, calendarType }) => {
                             <span
                               className={cn(
                                 isCurrentMonth ? "" : "grayText",
+                                minDateIn && minDateIn >= date
+                                  ? "grayText"
+                                  : "",
+                                maxDateIn && maxDateIn <= date
+                                  ? "grayText"
+                                  : "",
+                                disabled ? "grayText" : "",
                                 today ? "backgroundBlue " : "",
                                 "dateWidthAndHeight centerGrid",
                                 isCurrentMonth ? "currentMonth" : "",

@@ -30,6 +30,7 @@ const MyComponent = () => {
       value={selectedDate}
       onChange={handleDateChange}
       calendarType={true} // true for Ethiopian, false for Gregorian
+       // Optionally, you can also specify minDate, maxDate, and disabled here
     />
   );
 };
@@ -39,9 +40,12 @@ export default MyComponent;
 
 ## Props
 
-value (Date): The currently selected date.
-onChange (Function): Callback function that is called when a new date is selected. It receives the new date as a parameter.
-calendarType (Boolean): Determines the type of calendar to display initially. true for Ethiopian, false for Gregorian.
+- `value` (Date): The currently selected date. This should be a Date object.
+- `onChange` (Function): A callback function that is called when the selected date changes. It receives the new date as a parameter.
+- `calendarType` (Boolean): Determines the type of calendar to display. `true` for the Ethiopian calendar, `false` for the Gregorian calendar.
+- `minDate` (Date): The minimum date that can be selected. Dates before this will be disabled.
+- `maxDate` (Date): The maximum date that can be selected. Dates after this will be disabled.
+- `disabled` (Boolean): If set to `true`, disables the date selection.
 
 ## Connect with Me
 

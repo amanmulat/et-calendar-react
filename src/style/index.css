@@ -119,7 +119,11 @@
 }
 
 .buttonBackgroundEn {
-  background: rgb(124, 124, 216);
+  background: linear-gradient(
+    0.2deg,
+    rgb(51, 204, 255) 4.8%,
+    rgb(51, 102, 255) 85.5%
+  );
   background-size: cover;
 }
 
