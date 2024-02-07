@@ -43,11 +43,20 @@ export const nextMonth = (year, month, day) => {
   }
   return [year, month + 1, day];
 };
+
+export const nextYear = (year, month, day) => {
+  return [year + 1, month, day];
+};
+
 export const prevMonth = (year, month, day) => {
   if (month === 1) {
     return [year - 1, 13, 1];
   }
   return [year, month - 1, day];
+};
+
+export const prevYear = (year, month, day) => {
+  return [year - 1, month, day];
 };
 
 export const generateEthiopianDate = (

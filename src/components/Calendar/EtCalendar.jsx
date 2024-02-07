@@ -3,13 +3,23 @@ import { generateDate, months } from "../../utils/calendar";
 import "../../style/index.css";
 import cn from "../../utils/cn";
 import dayjs from "dayjs";
-import { GrFormNext, GrFormPrevious } from "react-icons/gr";
+import {
+  GrFormNext,
+  GrFormPrevious,
+  GrGooglePlus,
+  GrLinkNext,
+  GrNext,
+  GrPrevious,
+} from "react-icons/gr";
+import { GoPlus } from "react-icons/go";
 import {
   etLabel,
   etMonthsEnglish,
   generateEthiopianDate,
   nextMonth,
+  nextYear,
   prevMonth,
+  prevYear,
 } from "../../utils/EthiopianCalendar";
 import { FiCalendar } from "react-icons/fi";
 import { toEthiopian } from "ethiopian-date";
@@ -126,6 +136,14 @@ export const EtCalendar = ({
                       {etMonthsEnglish[etToday[1] - 1]}, {etToday[0]}{" "}
                     </span>
                     <div className="monthButtons">
+                      <GrPrevious
+                        onClick={() =>
+                          setEtToday(
+                            prevYear(etToday[0], etToday[1], etToday[2])
+                          )
+                        }
+                        className="monthButton"
+                      />
                       <GrFormPrevious
                         onClick={() =>
                           setEtToday(
@@ -144,6 +162,14 @@ export const EtCalendar = ({
                         onClick={() =>
                           setEtToday(
                             nextMonth(etToday[0], etToday[1], etToday[2])
+                          )
+                        }
+                        className="monthButton"
+                      />
+                      <GrNext
+                        onClick={() =>
+                          setEtToday(
+                            nextYear(etToday[0], etToday[1], etToday[2])
                           )
                         }
                         className="monthButton"
@@ -226,6 +252,10 @@ export const EtCalendar = ({
                     </span>
 
                     <div className="monthButtons">
+                      <GrPrevious
+                        onClick={() => setToday(today.year(today.year() - 1))}
+                        className="monthButton"
+                      />
                       <GrFormPrevious
                         onClick={() => setToday(today.month(today.month() - 1))}
                         className="monthButton"
@@ -238,6 +268,10 @@ export const EtCalendar = ({
                       </span>
                       <GrFormNext
                         onClick={() => setToday(today.month(today.month() + 1))}
+                        className="monthButton"
+                      />
+                      <GrNext
+                        onClick={() => setToday(today.year(today.year() + 1))}
                         className="monthButton"
                       />
                     </div>

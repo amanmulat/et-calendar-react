@@ -1,5 +1,7 @@
 # EtCalendar - Ethiopian Calendar Component for React
 
+![EtCalendar - Ethiopian Calendar Component for React](/src/assets/eg.png)
+
 EtCalendar is a React component that provides an easy-to-use Ethiopian calendar, with the option to toggle between the Ethiopian and Gregorian calendars. It's designed for seamless integration into your React projects, offering both flexibility and functionality.
 
 ## Features
@@ -49,7 +51,7 @@ export default MyComponent;
 
 ## Connect with Me
 
-Follow me on GitHub: [amanmulat](https://github.com/amanmulat "Github home")
+Follow me on GitHub: [amanmulat](https://github.com/amanmulat/et-calendar-react "Github home")
 
 LinkedIn: [Aman Mulat](https://www.linkedin.com/in/aman-mulat-7538ba1b9 "Linkedin home")
 
