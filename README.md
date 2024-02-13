@@ -42,12 +42,27 @@ export default MyComponent;
 
 ## Props
 
-- `value` (Date): The currently selected date. This should be a Date object.
-- `onChange` (Function): A callback function that is called when the selected date changes. It receives the new date as a parameter.
-- `calendarType` (Boolean): Determines the type of calendar to display. `true` for the Ethiopian calendar, `false` for the Gregorian calendar.
-- `minDate` (Date): The minimum date that can be selected. Dates before this will be disabled.
-- `maxDate` (Date): The maximum date that can be selected. Dates after this will be disabled.
-- `disabled` (Boolean): If set to `true`, disables the date selection.
+- `value` (Date): The currently selected date. Should be a Date object.
+
+- `onChange` (Function): Callback function for when the selected date changes. Receives the new date as a parameter.
+
+- `calendarType` (Boolean): Determines the type of calendar displayed. `true` for Ethiopian, `false` for Gregorian.
+
+- `minDate` (Date): The earliest selectable date. Dates before this are disabled.
+
+- `maxDate` (Date): The latest selectable date. Dates after this are disabled.
+
+- `disabled` (Boolean): Disables date selection if set to `true`.
+
+- `disableFuture` (Boolean): Disables selection of future dates if set to `true`.
+
+- `fullWidth` (Boolean): Enables full-width styling for the component.
+
+- `borderRadius` (String): Sets the border-radius for the component.
+
+- `placeholder` (String/Boolean): Placeholder text for the date input. If `false`, no placeholder is shown.
+
+- `lang` (String): Language setting for calendar labels (e.g., `"am"` for Amharic).
 
 ## Connect with Me
 

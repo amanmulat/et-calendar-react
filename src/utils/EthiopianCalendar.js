@@ -170,13 +170,18 @@ export const etDaysEnglish = [
 
 export const englishDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-export const etLabel = (date) => {
+export const etLabel = (date, lang) => {
   const month = date.month();
   const dayOfWeek = date.day();
   const year = date.year();
   const day = date.date();
   const etDate = toEthiopian(year, month + 1, day);
-  return `${englishDays[dayOfWeek]} ${etMonthsEnglish[etDate[1] - 1]} ${
+  if (lang === "am") {
+    return `${etDays[dayOfWeek]} ${etMonths[etDate[1] - 1]} ${etDate[2]} ${
+      etDate[0]
+    } `;
+  }
+  return `${etDaysEnglish[dayOfWeek]} ${etMonthsEnglish[etDate[1] - 1]} ${
     etDate[2]
   } ${etDate[0]} `;
 };

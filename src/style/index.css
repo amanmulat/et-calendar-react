@@ -1,14 +1,13 @@
-.calendarContainer {
+.calendarContainerEt {
   width: 320px;
-  /* height: 17rem; */
 }
 
-.gridSeven {
+.gridSevenEt {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
 }
 
-.w-full {
+.w-fullEt {
   width: 100%;
 }
 
@@ -51,14 +50,7 @@
   height: 1.7rem;
   border-radius: 50%;
 }
-/* .dateWidthAndHeight:hover {
-  background-color: #2a2a2a;
-  color: white;
-  transition-property: all;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
-  cursor: pointer;
-} */
+
 .selectedDate {
   background-color: #2a2a2a;
   color: white;
@@ -128,10 +120,6 @@
 }
 
 .Cal {
-  position: absolute;
-  top: 100%; /* Adjust this as needed */
-  left: 0;
-  z-index: 1000; /* Make sure it's above other content */
   width: fit-content;
   background-color: white;
   padding: 10px;
@@ -140,33 +128,33 @@
   user-select: none;
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
-.allContainer {
-  position: relative;
-}
-.datePickerContainer {
+
+.datePickerContainerEt {
   position: relative;
   display: inline-block;
   border: 1px solid #ccc;
   border-radius: 4px;
   padding: 5px 10px;
   background-color: white;
+  height: 100%;
 }
 
-.datePickerContainer:focus-within {
+.datePickerContainerEt:focus-within {
   border: 1px solid #555;
 }
-.datePickerContainer:focus-within .calendarIcon {
+.datePickerContainerEt:focus-within .calendarIcon {
   color: #555;
 }
-.datePickerContainer:hover {
+.datePickerContainerEt:hover {
   border: 1px solid #555;
 }
 .dateInputStyle {
-  flex-grow: 1; /* Allow the input to fill the container */
+  flex-grow: 1;
+  width: 100%;
   border: none;
   outline: none;
-  padding: 8px 10px; /* Adjust padding as needed */
-  box-sizing: border-box; /* Include padding and border in the width */
+  padding: 8px 10px;
+  box-sizing: border-box;
   user-select: none;
   cursor: pointer;
 }
@@ -177,5 +165,5 @@
   top: 50%;
   transform: translateY(-50%);
   color: #555;
-  pointer-events: none; /* Makes sure clicks on the icon focus the input */
+  pointer-events: none;
 }

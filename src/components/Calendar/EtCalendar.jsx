@@ -1,36 +1,26 @@
 import React, { useEffect, useRef, useState } from "react";
-import { generateDate, months } from "../../utils/calendar";
 import "../../style/index.css";
-import cn from "../../utils/cn";
 import dayjs from "dayjs";
-import {
-  GrFormNext,
-  GrFormPrevious,
-  GrGooglePlus,
-  GrLinkNext,
-  GrNext,
-  GrPrevious,
-} from "react-icons/gr";
-import { GoPlus } from "react-icons/go";
-import {
-  etLabel,
-  etMonthsEnglish,
-  generateEthiopianDate,
-  nextMonth,
-  nextYear,
-  prevMonth,
-  prevYear,
-} from "../../utils/EthiopianCalendar";
 import { FiCalendar } from "react-icons/fi";
 import { toEthiopian } from "ethiopian-date";
+import ElementPopper from "react-element-popper";
+
+import GcPicker from "./GcPicker.jsx";
+import EtPicker from "./EtPicker.jsx";
 
 export const EtCalendar = ({
   value,
   onChange,
   calendarType,
   minDate,
+  name,
   maxDate,
-  disabled,
+  disabled = false,
+  disableFuture = false,
+  fullWidth,
+  borderRadius,
+  placeholder = false,
+  lang,
 }) => {
   let minDateIn = null;
   let maxDateIn = null;
@@ -40,9 +30,16 @@ export const EtCalendar = ({
   if (maxDate) {
     maxDateIn = new Date(maxDate).setHours(0, 0, 0, 0);
   }
+
   const [calendarTypeInt, setCalendarTypeInt] = useState(
     calendarType === undefined || calendarType === null ? true : calendarType
   );
+  useEffect(() => {
+    setCalendarTypeInt(
+      calendarType === undefined || calendarType === null ? true : calendarType
+    );
+  }, [calendarType]);
+
   const [label, setLabel] = useState("");
   const days = ["S", "M", "T", "W", "T", "F", "S"];
   const calendarRef = useRef(null);
@@ -54,6 +51,10 @@ export const EtCalendar = ({
     currentDate.month() + 1,
     currentDate.date()
   );
+  const isFutureDate = (date) =>
+    new Date(date).getTime() > new Date().setHours(0, 0, 0, 0);
+
+  const [showCalendar, setShowCalendar] = useState(false);
   useEffect(() => {
     setSelectedDate(value);
   }, [value]);
@@ -69,14 +70,13 @@ export const EtCalendar = ({
   const [today, setToday] = useState(currentDate);
   const [etToday, setEtToday] = useState(etCurrentDate);
 
-  const toggleCalendarType = () => {
+  const toggleCalendarType = (e) => {
+    e.stopPropagation();
     setShowCalendar(true);
     setToday(currentDate);
     setEtToday(etCurrentDate);
     setCalendarTypeInt(!calendarTypeInt);
   };
-
-  const [showCalendar, setShowCalendar] = useState(false);
 
   const handleInputClick = (event) => {
     event.stopPropagation(); // Prevent click event from propagating
@@ -84,263 +84,98 @@ export const EtCalendar = ({
   };
   // Attach and detach the listener
   useEffect(() => {
-    let isMounted = true; // Flag to track mount status
-
-    const handleClickOutside = (event) => {
-      if (
-        showCalendar &&
-        calendarRef.current &&
-        !calendarRef.current.contains(event.target) &&
-        !inputRef.current.contains(event.target)
-      ) {
+    function handleClickOutside(e) {
+      if (calendarRef.current && !calendarRef.current.contains(e.target)) {
         setShowCalendar(false);
       }
-    };
-
-    if (showCalendar) {
-      document.addEventListener("mousedown", handleClickOutside);
     }
 
-    // Cleanup function
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      isMounted = false; // Update flag when component unmounts
-    };
-  }, [showCalendar]);
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
 
   return (
     <>
       <div className="allContainer ">
-        <div className="datePickerContainer" ref={inputRef}>
-          <input
-            type="text"
-            onClick={handleInputClick}
-            placeholder="Select a date"
-            readOnly
-            value={label ? label : ""}
-            className="dateInputStyle"
-          />
-          <FiCalendar className="calendarIcon" />
-        </div>
-        {showCalendar && (
-          <div ref={calendarRef} className="Cal">
-            {calendarTypeInt === true && (
-              <>
-                <div className="calendarContainer">
-                  <div className="topActions">
-                    <span>
-                      <button
-                        onClick={toggleCalendarType}
-                        className="buttonStyle buttonBackgroundEt"
-                      />
-                      {etMonthsEnglish[etToday[1] - 1]}, {etToday[0]}{" "}
-                    </span>
-                    <div className="monthButtons">
-                      <GrPrevious
-                        onClick={() =>
-                          setEtToday(
-                            prevYear(etToday[0], etToday[1], etToday[2])
-                          )
-                        }
-                        className="monthButton"
-                      />
-                      <GrFormPrevious
-                        onClick={() =>
-                          setEtToday(
-                            prevMonth(etToday[0], etToday[1], etToday[2])
-                          )
-                        }
-                        className="monthButton"
-                      />
-                      <span
-                        onClick={() => setEtToday(etCurrentDate)}
-                        className="todayButton"
-                      >
-                        Today
-                      </span>
-                      <GrFormNext
-                        onClick={() =>
-                          setEtToday(
-                            nextMonth(etToday[0], etToday[1], etToday[2])
-                          )
-                        }
-                        className="monthButton"
-                      />
-                      <GrNext
-                        onClick={() =>
-                          setEtToday(
-                            nextYear(etToday[0], etToday[1], etToday[2])
-                          )
-                        }
-                        className="monthButton"
-                      />
-                    </div>
-                  </div>
-                  <div className="gridSeven w-full">
-                    {days.map((day, index) => {
-                      return (
-                        <span
-                          key={index}
-                          className="rowHeight dayOfWeek centerGrid"
-                        >
-                          {day}
-                        </span>
-                      );
-                    })}
-                  </div>
-                  <div className=" gridSeven w-full">
-                    {generateEthiopianDate(etToday[1], etToday[0]).map(
-                      ({ day, isCurrentMonth, today, date }, index) => {
-                        const isSelectedDate =
-                          selectedDate &&
-                          new Date(selectedDate).getTime() ===
-                            new Date(date).getTime();
-
-                        return (
-                          <span
-                            key={index}
-                            onClick={() => {
-                              if (isCurrentMonth) {
-                                if (
-                                  !disabled &&
-                                  (!minDateIn || minDateIn <= date) &&
-                                  (!maxDateIn || maxDateIn >= date)
-                                ) {
-                                  setLabel(etLabel(date));
-                                  handleDateChange(date);
-                                }
-                              }
-                            }}
-                            className=" rowHeight dayText rowHeight centerGrid borderTop"
-                          >
-                            <span
-                              className={cn(
-                                isCurrentMonth ? "" : "grayText",
-                                minDateIn && minDateIn >= date
-                                  ? "grayText"
-                                  : "",
-                                maxDateIn && maxDateIn <= date
-                                  ? "grayText"
-                                  : "",
-                                disabled ? "grayText" : "",
-                                today ? "backgroundBlue " : "",
-                                "dateWidthAndHeight centerGrid",
-                                isCurrentMonth ? "currentMonth" : "",
-                                isSelectedDate ? "selectedDate" : ""
-                              )}
-                            >
-                              {day}
-                            </span>
-                          </span>
-                        );
-                      }
-                    )}
-                  </div>
+        <ElementPopper
+          ref={calendarRef}
+          zIndex={1000}
+          element={
+            <div
+              className="datePickerContainerEt"
+              style={{
+                width: fullWidth ? "100%" : "inherit",
+                borderRadius: borderRadius
+                  ? `${borderRadius}`
+                  : "1px solid #ccc",
+              }}
+              ref={inputRef}
+            >
+              <input
+                type="text"
+                onClick={handleInputClick}
+                placeholder={
+                  placeholder
+                    ? placeholder
+                    : lang === "am"
+                    ? "ቀን ይምረጡ"
+                    : "Select Date"
+                }
+                readOnly
+                name={name}
+                value={label ? label : ""}
+                className="dateInputStyle"
+              />
+              <FiCalendar className="calendarIcon" />
+            </div>
+          }
+          popper={
+            showCalendar && (
+              <div>
+                <div className="Cal">
+                  {calendarTypeInt === true && (
+                    <EtPicker
+                      minDateIn={minDateIn}
+                      maxDateIn={maxDateIn}
+                      selectedDate={selectedDate}
+                      toggleCalendarType={toggleCalendarType}
+                      handleDateChange={handleDateChange}
+                      disabled={disabled}
+                      disableFuture={disableFuture}
+                      lang={lang}
+                      etToday={etToday}
+                      setEtToday={setEtToday}
+                      days={days}
+                      setLabel={setLabel}
+                      isFutureDate={isFutureDate}
+                    />
+                  )}
+                  {calendarTypeInt === false && (
+                    <GcPicker
+                      minDateIn={minDateIn}
+                      maxDateIn={maxDateIn}
+                      selectedDate={selectedDate}
+                      toggleCalendarType={toggleCalendarType}
+                      handleDateChange={handleDateChange}
+                      disabled={disabled}
+                      disableFuture={disableFuture}
+                      lang={lang ? lang : false}
+                      today={today}
+                      setToday={setToday}
+                      days={days}
+                      setLabel={setLabel}
+                      isFutureDate={isFutureDate}
+                    />
+                  )}
                 </div>
-              </>
-            )}
-            {calendarTypeInt === false && (
-              <>
-                <div className="calendarContainer">
-                  <div className="topActions">
-                    <span>
-                      <button
-                        onClick={toggleCalendarType}
-                        className="buttonBackgroundEn buttonStyle"
-                      />
-                      {months[today.month()]}, {today.year()}
-                    </span>
-
-                    <div className="monthButtons">
-                      <GrPrevious
-                        onClick={() => setToday(today.year(today.year() - 1))}
-                        className="monthButton"
-                      />
-                      <GrFormPrevious
-                        onClick={() => setToday(today.month(today.month() - 1))}
-                        className="monthButton"
-                      />
-                      <span
-                        onClick={() => setToday(currentDate)}
-                        className="todayButton"
-                      >
-                        Today
-                      </span>
-                      <GrFormNext
-                        onClick={() => setToday(today.month(today.month() + 1))}
-                        className="monthButton"
-                      />
-                      <GrNext
-                        onClick={() => setToday(today.year(today.year() + 1))}
-                        className="monthButton"
-                      />
-                    </div>
-                  </div>
-                  <div className="gridSeven w-full">
-                    {days.map((day, index) => {
-                      return (
-                        <span
-                          key={index}
-                          className="rowHeight dayOfWeek centerGrid"
-                        >
-                          {day}
-                        </span>
-                      );
-                    })}
-                  </div>
-
-                  <div className=" gridSeven w-full">
-                    {generateDate(today.month(), today.year()).map(
-                      ({ date, isCurrentMonth, today }, index) => {
-                        const isSelectedDate =
-                          selectedDate &&
-                          new Date(selectedDate).getTime() ===
-                            new Date(date).getTime();
-                        return (
-                          <span
-                            onClick={() => {
-                              if (isCurrentMonth) {
-                                if (
-                                  !disabled &&
-                                  (!minDateIn || minDateIn <= date) &&
-                                  (!maxDateIn || maxDateIn >= date)
-                                ) {
-                                  handleDateChange(date);
-                                  setLabel(date.toDate().toDateString());
-                                }
-                              }
-                            }}
-                            key={index}
-                            className="rowHeight dayText rowHeight centerGrid borderTop"
-                          >
-                            <span
-                              className={cn(
-                                isCurrentMonth ? "" : "grayText",
-                                minDateIn && minDateIn >= date
-                                  ? "grayText"
-                                  : "",
-                                maxDateIn && maxDateIn <= date
-                                  ? "grayText"
-                                  : "",
-                                disabled ? "grayText" : "",
-                                today ? "backgroundBlue " : "",
-                                "dateWidthAndHeight centerGrid",
-                                isCurrentMonth ? "currentMonth" : "",
-                                isSelectedDate ? "selectedDate" : ""
-                              )}
-                            >
-                              {date.date()}
-                            </span>
-                          </span>
-                        );
-                      }
-                    )}
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-        )}
+              </div>
+            )
+          }
+          // active={showCalendar}
+          position="bottom-start"
+          fixMainPosition={true}
+          fixRelativePosition={true}
+        />
       </div>
     </>
   );

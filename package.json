@@ -1,7 +1,7 @@
 {
   "name": "et-calendar-react",
   "type": "module",
-  "version": "1.0.66",
+  "version": "1.0.78",
   "description": "A react date picker for Ethiopian Calendar and Gregorian Calendar",
   "keywords": [
     "ethiopian date picker",
@@ -58,6 +58,7 @@
   "dependencies": {
     "dayjs": "^1.11.10",
     "ethiopian-date": "^0.0.6",
+    "react-element-popper": "^2.1.6",
     "react-icons": "^4.12.0"
   }
 }
