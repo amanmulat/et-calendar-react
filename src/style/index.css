@@ -132,22 +132,26 @@
 .datePickerContainerEt {
   position: relative;
   display: inline-block;
-  border: 1px solid #ccc;
+  border: 2px solid #ccc;
   border-radius: 4px;
   padding: 5px 10px;
   background-color: white;
   height: 100%;
 }
+.datePickerContainerEt:hover {
+  border: 2px solid #83b5ff;
+}
 
 .datePickerContainerEt:focus-within {
-  border: 1px solid #555;
+  border: 2px solid #83b5ff;
 }
-.datePickerContainerEt:focus-within .calendarIcon {
-  color: #555;
+/* .datePickerContainerEt:focus-within .calendarIcon {
+  color: #83b5ff;
+} */
+.blueOpen {
+  border: 2px solid #83b5ff;
 }
-.datePickerContainerEt:hover {
-  border: 1px solid #555;
-}
+
 .dateInputStyle {
   flex-grow: 1;
   width: 100%;
@@ -160,10 +164,32 @@
 }
 
 .calendarIcon {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
   color: #555;
-  pointer-events: none;
+  cursor: pointer;
+  margin-left: 20px;
+}
+
+.etIndividualInput {
+  border: 1px solid #ced4da;
+  padding: 10px;
+  border-radius: 4px;
+  margin-right: 8px;
+  font-size: 16px;
+  outline: none;
+
+  &:focus {
+    border-color: #3f51b5;
+    box-shadow: 0 0 0 0.2rem rgba(63, 81, 181, 0.25);
+  }
+}
+
+.etHeight {
+  min-height: 200px;
+}
+
+.etDateLabel {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #555;
 }

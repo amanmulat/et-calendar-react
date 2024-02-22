@@ -77,3 +77,7 @@ export const months = [
   "November",
   "December",
 ];
+
+export const checkLeapYearGc = (year) => {
+  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+};

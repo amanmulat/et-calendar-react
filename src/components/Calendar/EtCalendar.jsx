@@ -1,26 +1,27 @@
-import React, { useEffect, useRef, useState } from "react";
-import "../../style/index.css";
 import dayjs from "dayjs";
-import { FiCalendar } from "react-icons/fi";
 import { toEthiopian } from "ethiopian-date";
+import React, { useEffect, useRef, useState } from "react";
 import ElementPopper from "react-element-popper";
+import "../../style/index.css";
 
-import GcPicker from "./GcPicker.jsx";
 import EtPicker from "./EtPicker.jsx";
+import GcPicker from "./GcPicker.jsx";
+import Input from "./Input.jsx";
 
 export const EtCalendar = ({
   value,
   onChange,
   calendarType,
   minDate,
+  maxDate = new Date(),
   name,
-  maxDate,
   disabled = false,
   disableFuture = false,
   fullWidth,
   borderRadius,
   placeholder = false,
   lang,
+  label = "Date",
 }) => {
   let minDateIn = null;
   let maxDateIn = null;
@@ -40,17 +41,24 @@ export const EtCalendar = ({
     );
   }, [calendarType]);
 
-  const [label, setLabel] = useState("");
-  const days = ["S", "M", "T", "W", "T", "F", "S"];
-  const calendarRef = useRef(null);
-  const inputRef = useRef(null);
-  const [selectedDate, setSelectedDate] = useState(value);
   const currentDate = dayjs();
   const etCurrentDate = toEthiopian(
     currentDate.year(),
     currentDate.month() + 1,
     currentDate.date()
   );
+
+  const [date, setDate] = useState({
+    day: "",
+    month: "",
+    year: "",
+  });
+
+  const days = ["S", "M", "T", "W", "T", "F", "S"];
+  const calendarRef = useRef(null);
+  const inputRef = useRef(null);
+  const [selectedDate, setSelectedDate] = useState(value);
+
   const isFutureDate = (date) =>
     new Date(date).getTime() > new Date().setHours(0, 0, 0, 0);
 
@@ -60,21 +68,83 @@ export const EtCalendar = ({
   }, [value]);
 
   const handleDateChange = (newDate) => {
+    if (maxDateIn && newDate > dayjs(maxDateIn)) {
+      newDate = dayjs(maxDateIn);
+    } else if (minDateIn && newDate < dayjs(minDateIn)) {
+      newDate = dayjs(minDateIn);
+    }
+
+    if (calendarTypeInt === true) {
+      const ethiopianDay = toEthiopian(
+        newDate.year(),
+        newDate.month() + 1,
+        newDate.date()
+      );
+
+      setDate({
+        day: ethiopianDay[2] < 10 ? `0${ethiopianDay[2]}` : ethiopianDay[2],
+        month: ethiopianDay[1] < 10 ? `0${ethiopianDay[1]}` : ethiopianDay[1],
+        year: ethiopianDay[0] < 10 ? `0${ethiopianDay[0]}` : ethiopianDay[0],
+      });
+    } else {
+      setDate({
+        day: newDate.date() < 10 ? `0${newDate.date()}` : newDate.date(),
+        month:
+          newDate.month() + 1 < 10
+            ? `0${newDate.month() + 1}`
+            : newDate.month() + 1,
+        year: newDate.year(),
+      });
+    }
+
     setSelectedDate(newDate);
     setShowCalendar(false);
     if (onChange) {
       onChange(newDate);
     }
   };
-
   const [today, setToday] = useState(currentDate);
   const [etToday, setEtToday] = useState(etCurrentDate);
-
   const toggleCalendarType = (e) => {
+    if (calendarTypeInt && selectedDate) {
+      setDate({
+        day:
+          selectedDate.date() < 10
+            ? `0${selectedDate.date()}`
+            : selectedDate.date(),
+        month:
+          selectedDate.month() + 1 < 10
+            ? `0${selectedDate.month() + 1}`
+            : selectedDate.month() + 1,
+        year: selectedDate.year(),
+      });
+    } else if (!calendarTypeInt && selectedDate) {
+      const ethiopianDay = toEthiopian(
+        selectedDate.year(),
+        selectedDate.month() + 1,
+        selectedDate.date()
+      );
+      setDate({
+        day: ethiopianDay[2] < 10 ? `0${ethiopianDay[2]}` : ethiopianDay[2],
+        month: ethiopianDay[1] < 10 ? `0${ethiopianDay[1]}` : ethiopianDay[1],
+        year: ethiopianDay[0] < 10 ? `0${ethiopianDay[0]}` : ethiopianDay[0],
+      });
+    }
     e.stopPropagation();
     setShowCalendar(true);
-    setToday(currentDate);
-    setEtToday(etCurrentDate);
+    if (selectedDate) {
+      setToday(selectedDate);
+      const etSelected = toEthiopian(
+        selectedDate.year(),
+        selectedDate.month() + 1,
+        selectedDate.date()
+      );
+      setEtToday(etSelected);
+    } else {
+      setToday(currentDate);
+      setEtToday(etCurrentDate);
+    }
+
     setCalendarTypeInt(!calendarTypeInt);
   };
 
@@ -94,6 +164,8 @@ export const EtCalendar = ({
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
+  // Handlers for input changes
+
   return (
     <>
       <div className="allContainer ">
@@ -101,33 +173,21 @@ export const EtCalendar = ({
           ref={calendarRef}
           zIndex={1000}
           element={
-            <div
-              className="datePickerContainerEt"
-              style={{
-                width: fullWidth ? "100%" : "inherit",
-                borderRadius: borderRadius
-                  ? `${borderRadius}`
-                  : "1px solid #ccc",
-              }}
-              ref={inputRef}
-            >
-              <input
-                type="text"
-                onClick={handleInputClick}
-                placeholder={
-                  placeholder
-                    ? placeholder
-                    : lang === "am"
-                    ? "ቀን ይምረጡ"
-                    : "Select Date"
-                }
-                readOnly
-                name={name}
-                value={label ? label : ""}
-                className="dateInputStyle"
-              />
-              <FiCalendar className="calendarIcon" />
-            </div>
+            <Input
+              fullWidth={fullWidth}
+              borderRadius={borderRadius}
+              inputRef={inputRef}
+              handleInputClick={handleInputClick}
+              placeholder={placeholder}
+              name={name}
+              lang={lang}
+              label={label}
+              date={date}
+              setDate={setDate}
+              handleDateChange={handleDateChange}
+              calendarTypeInt={calendarTypeInt}
+              showCalendar={showCalendar}
+            />
           }
           popper={
             showCalendar && (
@@ -146,8 +206,8 @@ export const EtCalendar = ({
                       etToday={etToday}
                       setEtToday={setEtToday}
                       days={days}
-                      setLabel={setLabel}
                       isFutureDate={isFutureDate}
+                      etCurrentDate={etCurrentDate}
                     />
                   )}
                   {calendarTypeInt === false && (
@@ -163,8 +223,8 @@ export const EtCalendar = ({
                       today={today}
                       setToday={setToday}
                       days={days}
-                      setLabel={setLabel}
                       isFutureDate={isFutureDate}
+                      currentDate={currentDate}
                     />
                   )}
                 </div>

@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { toEthiopian, toGregorian } from "ethiopian-date";
 
-const checkLeapYear = (year) => {
+export const checkLeapYear = (year) => {
   if (year % 4 === 3) {
     return 6;
   }
