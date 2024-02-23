@@ -13,7 +13,7 @@ export const EtCalendar = ({
   onChange,
   calendarType,
   minDate,
-  maxDate = new Date(),
+  maxDate,
   name,
   disabled = false,
   disableFuture = false,
@@ -48,6 +48,8 @@ export const EtCalendar = ({
     currentDate.date()
   );
 
+  const [today, setToday] = useState(currentDate);
+  const [etToday, setEtToday] = useState(etCurrentDate);
   const [date, setDate] = useState({
     day: "",
     month: "",
@@ -80,7 +82,7 @@ export const EtCalendar = ({
         newDate.month() + 1,
         newDate.date()
       );
-
+      setEtToday(ethiopianDay);
       setDate({
         day: ethiopianDay[2] < 10 ? `0${ethiopianDay[2]}` : ethiopianDay[2],
         month: ethiopianDay[1] < 10 ? `0${ethiopianDay[1]}` : ethiopianDay[1],
@@ -95,16 +97,17 @@ export const EtCalendar = ({
             : newDate.month() + 1,
         year: newDate.year(),
       });
+      setToday(newDate);
     }
 
     setSelectedDate(newDate);
+
     setShowCalendar(false);
     if (onChange) {
       onChange(newDate);
     }
   };
-  const [today, setToday] = useState(currentDate);
-  const [etToday, setEtToday] = useState(etCurrentDate);
+
   const toggleCalendarType = (e) => {
     if (calendarTypeInt && selectedDate) {
       setDate({
@@ -190,7 +193,8 @@ export const EtCalendar = ({
             />
           }
           popper={
-            showCalendar && (
+            <div>
+              {" "}
               <div>
                 <div className="Cal">
                   {calendarTypeInt === true && (
@@ -229,12 +233,10 @@ export const EtCalendar = ({
                   )}
                 </div>
               </div>
-            )
+            </div>
           }
-          // active={showCalendar}
+          active={showCalendar}
           position="bottom-start"
-          fixMainPosition={true}
-          fixRelativePosition={true}
         />
       </div>
     </>

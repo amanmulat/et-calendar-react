@@ -136,7 +136,6 @@ const Input = ({
       !calendarTypeInt &&
       value.length === 4
     ) {
-      console.log("going through");
       if (+date.day > 29) {
         return;
       }
@@ -171,7 +170,6 @@ const Input = ({
     setDate({ ...date, [name]: value });
 
     if (date.year.length === 4 && +date.month > 0 && +date.day > 0) {
-      console.log("first");
       properDateConverter(+date.year, +date.month, +date.day);
     }
     if (

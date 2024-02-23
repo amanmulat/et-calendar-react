@@ -22,8 +22,6 @@ const CustomDatePicker = ({ value, onDateChange }) => {
       .split("/")
       .map((part) => part.replace(/D|Y|M/g, ""));
 
-    console.log(day, month, year);
-
     // Add leading zero if day or month is a single digit and move to next part
     if (day.length === 1 && parseInt(day) > 3) {
       day = `0${day}`;
