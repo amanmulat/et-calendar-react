@@ -3,7 +3,6 @@ import { toEthiopian } from "ethiopian-date";
 import React, { useEffect, useRef, useState } from "react";
 import ElementPopper from "react-element-popper";
 import "../../style/index.css";
-
 import EtPicker from "./EtPicker.jsx";
 import GcPicker from "./GcPicker.jsx";
 import Input from "./Input.jsx";
@@ -50,10 +49,37 @@ export const EtCalendar = ({
 
   const [today, setToday] = useState(currentDate);
   const [etToday, setEtToday] = useState(etCurrentDate);
+  let valueDateEt;
+  let valueDateGc;
+  if (value) {
+    valueDateGc = dayjs(new Date(value));
+    valueDateEt = toEthiopian(
+      valueDateGc.year(),
+      valueDateGc.month() + 1,
+      valueDateGc.day()
+    );
+  }
+
   const [date, setDate] = useState({
-    day: "",
-    month: "",
-    year: "",
+    day: value
+      ? calendarTypeInt
+        ? valueDateEt[2] < 10
+          ? `0${valueDateEt[2]}`
+          : valueDateEt[2]
+        : valueDateGc.date() < 10
+        ? `0${valueDateGc.date()}`
+        : valueDateGc.date()
+      : "",
+    month: value
+      ? calendarTypeInt
+        ? valueDateEt[1] < 10
+          ? `0${valueDateEt[1]}`
+          : valueDateEt[1]
+        : valueDateGc.month() + 1 < 10
+        ? `0${valueDateGc.month() + 1}`
+        : valueDateGc.month() + 1
+      : "",
+    year: value ? (calendarTypeInt ? valueDateEt[0] : valueDateGc.year()) : "",
   });
 
   const days = ["S", "M", "T", "W", "T", "F", "S"];
@@ -170,75 +196,71 @@ export const EtCalendar = ({
   // Handlers for input changes
 
   return (
-    <>
-      <div className="allContainer ">
-        <ElementPopper
-          ref={calendarRef}
-          zIndex={1000}
-          element={
-            <Input
-              fullWidth={fullWidth}
-              borderRadius={borderRadius}
-              inputRef={inputRef}
-              handleInputClick={handleInputClick}
-              placeholder={placeholder}
-              name={name}
-              lang={lang}
-              label={label}
-              date={date}
-              setDate={setDate}
-              handleDateChange={handleDateChange}
-              calendarTypeInt={calendarTypeInt}
-              showCalendar={showCalendar}
-            />
-          }
-          popper={
-            <div>
-              {" "}
-              <div>
-                <div className="Cal">
-                  {calendarTypeInt === true && (
-                    <EtPicker
-                      minDateIn={minDateIn}
-                      maxDateIn={maxDateIn}
-                      selectedDate={selectedDate}
-                      toggleCalendarType={toggleCalendarType}
-                      handleDateChange={handleDateChange}
-                      disabled={disabled}
-                      disableFuture={disableFuture}
-                      lang={lang}
-                      etToday={etToday}
-                      setEtToday={setEtToday}
-                      days={days}
-                      isFutureDate={isFutureDate}
-                      etCurrentDate={etCurrentDate}
-                    />
-                  )}
-                  {calendarTypeInt === false && (
-                    <GcPicker
-                      minDateIn={minDateIn}
-                      maxDateIn={maxDateIn}
-                      selectedDate={selectedDate}
-                      toggleCalendarType={toggleCalendarType}
-                      handleDateChange={handleDateChange}
-                      disabled={disabled}
-                      disableFuture={disableFuture}
-                      lang={lang ? lang : false}
-                      today={today}
-                      setToday={setToday}
-                      days={days}
-                      isFutureDate={isFutureDate}
-                      currentDate={currentDate}
-                    />
-                  )}
-                </div>
-              </div>
-            </div>
-          }
-          active={showCalendar}
-          position="bottom-start"
+    <ElementPopper
+      ref={calendarRef}
+      zIndex={1000}
+      element={
+        <Input
+          fullWidth={fullWidth}
+          borderRadius={borderRadius}
+          inputRef={inputRef}
+          handleInputClick={handleInputClick}
+          placeholder={placeholder}
+          name={name}
+          lang={lang}
+          label={label}
+          date={date}
+          setDate={setDate}
+          handleDateChange={handleDateChange}
+          calendarTypeInt={calendarTypeInt}
+          showCalendar={showCalendar}
         />
-      </div>
-    </>
+      }
+      popper={
+        <div>
+          {" "}
+          <div>
+            <div className="Cal">
+              {calendarTypeInt === true && (
+                <EtPicker
+                  minDateIn={minDateIn}
+                  maxDateIn={maxDateIn}
+                  selectedDate={selectedDate}
+                  toggleCalendarType={toggleCalendarType}
+                  handleDateChange={handleDateChange}
+                  disabled={disabled}
+                  disableFuture={disableFuture}
+                  lang={lang}
+                  etToday={etToday}
+                  setEtToday={setEtToday}
+                  days={days}
+                  isFutureDate={isFutureDate}
+                  etCurrentDate={etCurrentDate}
+                />
+              )}
+              {calendarTypeInt === false && (
+                <GcPicker
+                  minDateIn={minDateIn}
+                  maxDateIn={maxDateIn}
+                  selectedDate={selectedDate}
+                  toggleCalendarType={toggleCalendarType}
+                  handleDateChange={handleDateChange}
+                  disabled={disabled}
+                  disableFuture={disableFuture}
+                  lang={lang ? lang : false}
+                  today={today}
+                  setToday={setToday}
+                  days={days}
+                  isFutureDate={isFutureDate}
+                  currentDate={currentDate}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      }
+      active={showCalendar}
+      position="bottom-start"
+    />
   );
 };

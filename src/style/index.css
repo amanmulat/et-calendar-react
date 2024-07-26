@@ -193,3 +193,11 @@
   margin-bottom: 5px;
   color: #555;
 }
+.width100 {
+  width: 100%;
+}
+
+.no-focus-border:focus {
+  outline: none;
+  border: none;
+}
