@@ -3,10 +3,10 @@ import TimeInput from "./TimeInput.jsx";
 import "../../style/index.css";
 
 export const EtTimePicker = ({
-  value = "20:00",
+  value = "10:00",
   onChange,
-  minTime = "21:00",
-  maxTime = "23:00",
+  minTime = "11:00",
+  maxTime,
   calendarType = true,
   disabled = false,
   error = false,
@@ -28,7 +28,7 @@ export const EtTimePicker = ({
       const minTotalMinutes = minHour * 60 + minMinute;
       const currentTotalMinutes = adjustedHour * 60 + minute;
       if (currentTotalMinutes < minTotalMinutes) {
-        return minTime;
+        return false;
       }
     }
 
@@ -37,18 +37,22 @@ export const EtTimePicker = ({
       const maxTotalMinutes = maxHour * 60 + maxMinute;
       const currentTotalMinutes = adjustedHour * 60 + minute;
       if (currentTotalMinutes > maxTotalMinutes) {
-        return maxTime;
+        return false;
       }
     }
 
     return time;
   };
 
-  const [valueInt, setValueInt] = useState(value);
+  const [valueInt, setValueInt] = useState(getProperTimeBasedOnLimit(value));
 
   useEffect(() => {
     const properTime = getProperTimeBasedOnLimit(value);
-    setValueInt(properTime);
+    if (!properTime) {
+      setValueInt(null);
+      return;
+    }
+    setValueInt(value);
   }, [minTime, maxTime, value]);
 
   const constructTime = (hour, minute) => {
@@ -58,7 +62,6 @@ export const EtTimePicker = ({
   };
 
   const onTimeChange = (time) => {
-    console.log("time", time);
     if (!time) return;
     const { hour, minute } = time;
     const timeStr = constructTime(hour, minute);

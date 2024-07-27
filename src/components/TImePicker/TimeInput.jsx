@@ -5,7 +5,7 @@ import { BsSunriseFill } from "react-icons/bs";
 import { RiMoonClearFill } from "react-icons/ri";
 
 const TimeInput = ({
-  calendarType = true,
+  calendarType,
   onTimeChange,
   min,
   max,
@@ -231,15 +231,13 @@ const TimeInput = ({
   };
 
   useEffect(() => {
-    if (onTimeChange) {
-      const { hour, minute } = get24HourFormat();
-      if (hour === "" || minute === "") {
-        onTimeChange(null);
-        return;
-      }
-
-      onTimeChange(get24HourFormat());
+    const { hour, minute } = get24HourFormat();
+    if (hour === "" || minute === "") {
+      onTimeChange(null);
+      return;
     }
+
+    onTimeChange(get24HourFormat());
   }, [hours, minutes, period]);
 
   const adjustTimeForCalendarType = () => {
@@ -316,7 +314,7 @@ const TimeInput = ({
     setHours(hour);
     setMinutes(minute);
     setPeriod(p);
-    onTimeChange(get24HourFormat());
+    // onTimeChange(get24HourFormat());
   }, [value]);
 
   useEffect(() => {
@@ -361,6 +359,7 @@ const TimeInput = ({
           }}
         >
           <button
+            type="button"
             style={{
               padding: "4px",
               backgroundColor: "white",
@@ -391,6 +390,7 @@ const TimeInput = ({
             }}
           />
           <button
+            type="button"
             style={{
               padding: "4px",
               backgroundColor: "white",
@@ -418,6 +418,7 @@ const TimeInput = ({
           }}
         >
           <button
+            type="button"
             style={{
               padding: "4px",
               backgroundColor: "white",
@@ -453,6 +454,7 @@ const TimeInput = ({
             }}
           />
           <button
+            type="button"
             style={{
               padding: "4px",
               backgroundColor: "white",
@@ -469,6 +471,7 @@ const TimeInput = ({
       </div>
       <div>
         <button
+          type="button"
           style={{
             padding: "4px",
             backgroundColor: "white",
