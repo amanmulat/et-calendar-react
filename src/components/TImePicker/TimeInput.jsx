@@ -16,17 +16,49 @@ const TimeInput = ({
   const parseTime = (time) => {
     if (!time) return { hour: "", minute: "" };
     const [hour, minute] = time.split(":").map(Number);
-    console.log({ hour, minute });
+
     if (isNaN(hour) || isNaN(minute)) return { hour: "", minute: "" };
     return { hour, minute };
   };
+  const get12HourFormat = (value) => {
+    const { hour, minute } = parseTime(value);
+    if (isNaN(hour) || isNaN(minute) || hour === "" || minute === "")
+      return { hour: "", minute: "", period: "AM" };
+    if (calendarType) {
+      if (hour >= 0 && hour <= 6) {
+        return { hour: 6 + hour, minute: Number(minute), period: "PM" }; // ethiopian midnight to 12
+      }
+      if (hour > 6 && hour <= 18) {
+        return { hour: hour - 6, minute: Number(minute), period: "AM" }; // ethiopian 6am to noon
+      }
+      if (hour > 18 && hour <= 24) {
+        return { hour: hour - 18, minute: Number(minute), period: "PM" }; // ethiopian noon to midnight
+      }
+    } else {
+      //  gregorian time
+      if (hour >= 0 && hour < 12) {
+        return { hour: hour, minute: Number(minute), period: "AM" }; // gregorian midnight to noon
+      }
+      if (hour >= 12 && hour < 24) {
+        return { hour: hour - 12, minute: Number(minute), period: "PM" }; // gregorian noon to midnight
+      }
+      if (hour === 24) {
+        return { hour: 12, minute: Number(minute), period: "AM" }; // gregorian midnight
+      }
+    }
+  };
 
-  const { hour: valueHour, minute: valueMinute } = parseTime(value);
+  const {
+    hour: valueHour,
+    minute: valueMinute,
+    period: valuePeriod,
+  } = get12HourFormat(value);
+
   const [hours, setHours] = useState(valueHour);
-  console.log({ ddd: valueHour, hours });
   const [minutes, setMinutes] = useState(valueMinute);
-  const [period, setPeriod] = useState("AM");
+  const [period, setPeriod] = useState(valuePeriod);
   const minuteInputRef = useRef(null);
+  const initialRender = useRef(true);
 
   const handleInputFocus = (e) => {
     e.target.select();
@@ -77,8 +109,10 @@ const TimeInput = ({
     setHours((prevHours) => {
       if (prevHours === "") {
         let newHours = increment > 0 ? 1 : 12;
+
         if (increment > 0 && min) {
           const { hour: minHour, minute: minMinute } = parseTime(min);
+
           if (isTimeWithinRange(minHour, minMinute, period)) {
             newHours = calendarType
               ? (minHour - 6) % 12 || 12
@@ -150,7 +184,13 @@ const TimeInput = ({
 
   const handleMinuteInputChange = (e) => {
     if (disabled) return;
-    const value = e.target.value.replace(/^0+/, ""); // Remove leading zeros
+    let value;
+    if (e.target.value === "0") {
+      value = 0;
+    } else {
+      value = e.target.value.replace(/^0+/, ""); // Remove leading zeros
+    }
+
     if (value === "" || (Number(value) >= 0 && Number(value) < 60)) {
       const newMinutes = Number(value);
       if (isTimeWithinRange(Number(hours), newMinutes, period)) {
@@ -168,7 +208,9 @@ const TimeInput = ({
   };
 
   const get24HourFormat = () => {
+    if (hours === "" || minutes === "") return { hour: "", minute: "" };
     let hour = Number(hours);
+
     if (calendarType) {
       // Ethiopian time
       if (period === "AM") {
@@ -190,78 +232,99 @@ const TimeInput = ({
 
   useEffect(() => {
     if (onTimeChange) {
+      const { hour, minute } = get24HourFormat();
+      if (hour === "" || minute === "") {
+        onTimeChange(null);
+        return;
+      }
+
       onTimeChange(get24HourFormat());
     }
   }, [hours, minutes, period]);
 
-  useEffect(() => {
-    const adjustTimeForCalendarType = () => {
-      let hour = Number(hours);
-      let newPeriod = period;
-      if (!calendarType && hour !== 0) {
-        // Adjust to Ethiopian time
-        if (hour > 6 && hour < 12 && period === "AM") {
-          hour = (hour % 12) - 6;
-          newPeriod = "PM";
-        } else if (hour > 6 && hour < 12 && period === "PM") {
-          hour = (hour % 12) - 6;
-          newPeriod = "AM";
-        } else if (hour >= 1 && hour < 6 && period === "AM") {
-          hour = (hour % 12) + 6;
-          newPeriod = "AM";
-        } else if (hour >= 1 && hour < 6 && period === "PM") {
-          hour = (hour % 12) + 6;
-          newPeriod = "PM";
-        } else if (hour === 12 && period === "AM") {
-          hour = 6;
-          newPeriod = "AM";
-        } else if (hour === 12 && period === "PM") {
-          hour = 6;
-          newPeriod = "PM";
-        } else if (hour === 6 && period === "AM") {
-          hour = 12;
-          newPeriod = "PM";
-        } else if (hour === 6 && period === "PM") {
-          hour = 12;
-          newPeriod = "AM";
-        }
-      } else if (calendarType && hour !== 0) {
-        // Adjust to Gregorian time
-        if (hour > 6 && hour < 12 && period === "AM") {
-          newPeriod = "AM";
-          hour = hour - 6;
-        } else if (hour >= 1 && hour < 6 && period === "PM") {
-          newPeriod = "AM";
-          hour = hour + 6;
-        } else if (hour >= 1 && hour < 6 && period === "AM") {
-          newPeriod = "PM";
-          hour = hour + 6;
-        } else if (hour > 6 && hour < 12 && period === "PM") {
-          newPeriod = "PM";
-          hour = hour - 6;
-        } else if (hour === 6 && period === "AM") {
-          newPeriod = "AM";
-          hour = 12;
-        } else if (hour === 6 && period === "PM") {
-          newPeriod = "PM";
-          hour = 12;
-        } else if (hour === 12 && period === "AM") {
-          newPeriod = "PM";
-          hour = 6;
-        } else if (hour === 12 && period === "PM") {
-          newPeriod = "AM";
-          hour = 6;
-        }
-
-        if (hour <= 0) {
-          hour += 12;
-        }
+  const adjustTimeForCalendarType = () => {
+    let hour = Number(hours);
+    let newPeriod = period;
+    if (!calendarType && hour !== 0) {
+      // Adjust to Ethiopian time
+      if (hour > 6 && hour < 12 && period === "AM") {
+        hour = (hour % 12) - 6;
+        newPeriod = "PM";
+      } else if (hour > 6 && hour < 12 && period === "PM") {
+        hour = (hour % 12) - 6;
+        newPeriod = "AM";
+      } else if (hour >= 1 && hour < 6 && period === "AM") {
+        hour = (hour % 12) + 6;
+        newPeriod = "AM";
+      } else if (hour >= 1 && hour < 6 && period === "PM") {
+        hour = (hour % 12) + 6;
+        newPeriod = "PM";
+      } else if (hour === 12 && period === "AM") {
+        hour = 6;
+        newPeriod = "AM";
+      } else if (hour === 12 && period === "PM") {
+        hour = 6;
+        newPeriod = "PM";
+      } else if (hour === 6 && period === "AM") {
+        hour = 12;
+        newPeriod = "PM";
+      } else if (hour === 6 && period === "PM") {
+        hour = 12;
+        newPeriod = "AM";
       }
-      setHours(hour);
-      setPeriod(newPeriod);
-    };
+    } else if (calendarType && hour !== 0) {
+      // Adjust to Gregorian time
+      if (hour > 6 && hour < 12 && period === "AM") {
+        newPeriod = "AM";
+        hour = hour - 6;
+      } else if (hour >= 1 && hour < 6 && period === "PM") {
+        newPeriod = "AM";
+        hour = hour + 6;
+      } else if (hour >= 1 && hour < 6 && period === "AM") {
+        newPeriod = "PM";
+        hour = hour + 6;
+      } else if (hour > 6 && hour < 12 && period === "PM") {
+        newPeriod = "PM";
+        hour = hour - 6;
+      } else if (hour === 6 && period === "AM") {
+        newPeriod = "AM";
+        hour = 12;
+      } else if (hour === 6 && period === "PM") {
+        newPeriod = "PM";
+        hour = 12;
+      } else if (hour === 12 && period === "AM") {
+        newPeriod = "PM";
+        hour = 6;
+      } else if (hour === 12 && period === "PM") {
+        newPeriod = "AM";
+        hour = 6;
+      }
 
-    adjustTimeForCalendarType();
+      if (hour <= 0) {
+        hour += 12;
+      }
+    }
+
+    if (hours !== "") {
+      setHours(hour);
+    }
+    setPeriod(newPeriod);
+  };
+
+  useEffect(() => {
+    const { hour, minute, period: p } = get12HourFormat(value);
+    setHours(hour);
+    setMinutes(minute);
+    setPeriod(p);
+    onTimeChange(get24HourFormat());
+  }, [value]);
+
+  useEffect(() => {
+    if (initialRender.current) {
+      initialRender.current = false;
+    } else {
+      adjustTimeForCalendarType();
+    }
   }, [calendarType]);
 
   const getTextColor = () => {
